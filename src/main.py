@@ -3,13 +3,16 @@ from src.loader import load_csv
 from src.sales_aggregator import aggregate_sales
 from src.inventory_engine import reconcile_inventory
 from src.reporter import generate_reports
+import os
+import logging
+
+os.makedirs("logs", exist_ok=True)
 
 logging.basicConfig(
     filename="logs/inventory.log",
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s"
 )
-
 def main():
 
     inventory = load_csv("data/inventory.csv")
