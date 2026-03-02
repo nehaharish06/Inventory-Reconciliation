@@ -1,31 +1,32 @@
-import logging
-from src.loader import load_csv
-from src.sales_aggregator import aggregate_sales
-from src.inventory_engine import reconcile_inventory
-from src.reporter import generate_reports
 import os
 import logging
+from loader import load_inventory, load_sales
+from sales_aggregator import aggregate_sales
+from inventory_engine import reconcile_inventory
+from reporter import generate_summary, generate_sales_graph
 
-os.makedirs("logs", exist_ok=True)
+# Ensure logs directory exists
+os.makedirs("../logs", exist_ok=True)
 
 logging.basicConfig(
-    filename="logs/inventory.log",
+    filename="../logs/inventory.log",
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s"
 )
+
 def main():
+    inventory = load_inventory("./data/inventory.csv")python -m unittest discover tests
+    sales = load_sales("./data/sales_transactions.csv")
 
-    inventory = load_csv("data/inventory.csv")
-    sales = load_csv("data/sales_transactions.csv")
+    aggregated_sales, transactions_processed = aggregate_sales(sales, inventory)
 
-    sales_map, total_transactions = aggregate_sales(sales, inventory)
+    reconciled_df = reconcile_inventory(inventory, aggregated_sales)
 
-    results = reconcile_inventory(inventory, sales_map)
+    reconciled_df.to_csv("inventory_reconciliation.csv", index=False)
 
-    summary = generate_reports(results, total_transactions)
+    generate_summary(reconciled_df, transactions_processed)
 
-    print("Inventory Reconciliation Completed")
-    print(summary)
+    generate_sales_graph(reconciled_df)
 
 if __name__ == "__main__":
     main()
