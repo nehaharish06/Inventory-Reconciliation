@@ -25,7 +25,8 @@ def aggregate_sales(sales_df, inventory_df):
     invalid_products = sales_df[~sales_df["product_id"].isin(valid_products)]
     
     if not invalid_products.empty:
-        logging.warning("Unknown product IDs detected")
+     for pid in invalid_products["product_id"].unique():
+         logging.warning(f"Invalid product ID in sales: {pid}")
 
     sales_df = sales_df[sales_df["product_id"].isin(valid_products)]
 

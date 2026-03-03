@@ -3,7 +3,7 @@ import logging
 from loader import load_inventory, load_sales
 from sales_aggregator import aggregate_sales
 from inventory_engine import reconcile_inventory
-from reporter import generate_summary, generate_sales_graph
+from reporter import generate_summary, generate_sales_graph, generate_category_sales_graph,   generate_sales_vs_stock_graph
 
 # Ensure logs directory exists
 os.makedirs("../logs", exist_ok=True)
@@ -15,7 +15,7 @@ logging.basicConfig(
 )
 
 def main():
-    inventory = load_inventory("./data/inventory.csv")python -m unittest discover tests
+    inventory = load_inventory("./data/inventory.csv")
     sales = load_sales("./data/sales_transactions.csv")
 
     aggregated_sales, transactions_processed = aggregate_sales(sales, inventory)
@@ -27,6 +27,11 @@ def main():
     generate_summary(reconciled_df, transactions_processed)
 
     generate_sales_graph(reconciled_df)
+
+    generate_category_sales_graph(reconciled_df)
+
+    generate_sales_vs_stock_graph(reconciled_df)
+
 
 if __name__ == "__main__":
     main()
